@@ -1,0 +1,7 @@
+^addPmData\.Rproj$
+^\.Rproj\.user$
+example_script.R
+^LICENSE\.md$
+^\.github$
+^README\.Rmd$
+^s3_downloads$

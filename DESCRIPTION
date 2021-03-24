@@ -1,0 +1,46 @@
+Package: addPmData
+Title: Add PM Estimates to Geocoded Data Based on h3 Geohash
+Version: 0.0.0.9000
+Authors@R: c(
+    person(given = "Erika",
+           family = "Rasnick",
+           role = c("aut", "cre"),
+           email = "erika.rasnick@cchmc.org"), 
+    person(given = "Cole",
+           family = "Brokamp",
+           role = c("aut"))
+           )
+Description: The addPmData package converts latitude and longitude to 
+             h3 geohash, and downloads data from an online repository 
+             based on that geohash. Data is stored as "chunk" files 
+             based on h3 geohash and year to prevent the user from 
+             downloading large amounts of unneeded data. Daily PM data 
+             is then joined to the user's input data based on geohash
+             and date.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    cli (>= 2.3.1),
+    data.table (>= 1.14.0),
+    dht (>= 0.0.0.9000),
+    dplyr (>= 1.0.5),
+    fst (>= 0.9.4),
+    glue (>= 1.4.2),
+    h3jsr (>= 1.2.1),
+    lubridate (>= 1.7.9.2),
+    magrittr,
+    progressr (>= 0.7.0),
+    purrr (>= 0.3.4),
+    s3 (>= 0.2.5),
+    stringr (>= 1.4.0),
+    tidyr (>= 1.1.3)
+Remotes:
+  degauss-org/dht
+  geomarker-io/s3
+Suggests: 
+    tibble (>= 3.1.0),
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

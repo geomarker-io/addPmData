@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+example_script.R
+s3_downloads/
+.DS_Store
+addPmData.Rproj
