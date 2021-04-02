@@ -109,9 +109,6 @@ add_pm <- function(d, verbose = FALSE, ...) {
     })
   })
 
-  d_pm <- purrr::map2(d_split, pm_chunks$file_path, read_chunk_join)
-  d_pm <- dplyr::bind_rows(d_pm)
+  d_pm <- dplyr::bind_rows(d_split_pm)
   return(d_pm)
 }
-
-
