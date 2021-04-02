@@ -109,6 +109,6 @@ add_pm <- function(d, verbose = FALSE, ...) {
     })
   })
 
-  d_pm <- dplyr::bind_rows(d_pm)
+  d_pm <- dplyr::bind_rows(d_split_pm)
   return(d_pm)
 }
