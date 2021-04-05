@@ -8,23 +8,11 @@ prep_data <- function(d) {
 
   d$start_date <- dht::check_dates(d$start_date)
   d$end_date <- dht::check_dates(d$end_date)
-
-  check_date_order <- d$end_date > d$start_date
-  if (FALSE %in% check_date_order) {
-    row_num <- which(!check_date_order)
-    cli::cli_alert_danger('end_date occurs before start_date in these rows: {row_num}')
-    stop(call. = FALSE)
-  }
-  # dht::check_end_after_start_date(d$start_date, d$end_date)
+  dht::check_end_after_start_date(d$start_date, d$end_date)
 
   if (any(c(d$start_date < as.Date("2000-01-01"), d$end_date > as.Date("2020-12-31")))) {
     cli::cli_alert_warning("one or more dates are out of range. data is available 2000-2020.")
   }
-}
-
-expand_dates <- function(d) {
-  d <- dplyr::mutate(d, date = purrr::map2(start_date, end_date, ~seq.Date(from = .x, to = .y, by = 'day')))
-  tidyr::unnest(d, cols = c(date))
 }
 
 read_chunk_join <- function(d_split, fl_path, verbose=FALSE) {
@@ -72,20 +60,18 @@ get_unique_h3_3_year <- function(pm_chunks) {
 add_pm <- function(d, verbose = FALSE, ...) {
   prep_data(d)
 
-  d <- expand_dates(d)
-  # d <- dht::expand_dates(d, by = 'day')
+  d <- dht::expand_dates(d, by = 'day')
+  d$year <- lubridate::year(d$date)
 
   message('matching lat/lon to h3 cells...')
-  d$h3_3 <- suppressMessages(h3jsr::point_to_h3(dplyr::select(d, lon, lat), res = 3))
+  d$h3 <- suppressMessages(h3jsr::point_to_h3(dplyr::select(d, lon, lat), res = 8))
+  d$h3_3 <- h3jsr::get_parent(d$h3, res = 3)
   cincinnati_h3_3 <- c("832a93fffffffff", "832a90fffffffff", "83266dfffffffff", "832a9efffffffff")
   if (sum(!d$h3_3 %in% cincinnati_h3_3) > 0) {
     cli::cli_alert_warning("This package is under development. Data is only currently available for the Cincinnati region, but will be available nationwide soon.\n
                            Removing non-Cincinnati rows...\n")
     d <- dplyr::filter(d, h3_3 %in% cincinnati_h3_3)
   }
-
-  d$h3 <- suppressMessages(h3jsr::point_to_h3(dplyr::select(d, lon, lat), res = 8))
-  d$year <- lubridate::year(d$date)
 
   message('downloading PM chunk files...')
   pm_chunks <-
