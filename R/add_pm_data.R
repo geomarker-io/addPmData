@@ -75,7 +75,7 @@ add_pm <- function(d, verbose = FALSE, ...) {
 
   message('downloading PM chunk files...')
   pm_chunks <-
-    glue::glue("s3://geomarker/st_pm_hex/h3_pm/{d$h3_3}_{d$year}_h3pm.fst") %>%
+    glue::glue("s3://pm25-brokamp/{d$h3_3}_{d$year}_h3pm.fst") %>%
     unique() %>%
     s3::s3_get_files(...) %>%
     get_unique_h3_3_year()
