@@ -8,15 +8,13 @@
 [![R-CMD-check](https://github.com/geomarker-io/addPmData/workflows/R-CMD-check/badge.svg)](https://github.com/geomarker-io/addPmData/actions)
 <!-- badges: end -->
 
-The goal of addPmData is to add PM estimates to geocoded data based on
-h3 geohash.
+The goal of addPmData is to add PM2.5 estimates to geocoded data.
 
-More information on the building of the PM model and creation of PM
-chunk files can be found
+The PM2.5 exposure assessment model is currently unpublished, but the private repository of code used to build the model can be found
 [here](https://github.com/geomarker-io/st_pm_hex).
 
 Our PM estimates are currently private, and access requires
-authenication through Amazon s3. Please contact us for credentials, and
+authenication through Amazon Web Services (AWS) S3. Please contact us for credentials, and
 see our documentation for [how to set up AWS credentials in
 R](https://github.com/geomarker-io/s3#setting-up-aws-credentials).
 
