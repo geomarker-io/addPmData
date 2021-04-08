@@ -1,6 +1,6 @@
 Package: addPmData
 Title: Add PM Estimates to Geocoded Data Based on H3 Geohash
-Version: 0.0.0.9000
+Version: 0.0.0.1
 Authors@R: c(
     person(given = "Erika",
            family = "Rasnick",
