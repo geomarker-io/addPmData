@@ -66,11 +66,27 @@ add_pm <- function(d, verbose = FALSE, ...) {
   message('matching lat/lon to h3 cells...')
   d$h3 <- suppressMessages(h3jsr::point_to_h3(dplyr::select(d, lon, lat), res = 8))
   d$h3_3 <- h3jsr::get_parent(d$h3, res = 3)
-  cincinnati_h3_3 <- c("832a93fffffffff", "832a90fffffffff", "83266dfffffffff", "832a9efffffffff")
-  if (sum(!d$h3_3 %in% cincinnati_h3_3) > 0) {
-    cli::cli_alert_warning("This package is under development. Data is only currently available for the Cincinnati region, but will be available nationwide soon.\n
-                           Removing non-Cincinnati rows...\n")
-    d <- dplyr::filter(d, h3_3 %in% cincinnati_h3_3)
+
+  available_h3_3 <- c("834453fffffffff", "834451fffffffff", "832ab5fffffffff", "83270bfffffffff",
+                      "832ab3fffffffff", "832806fffffffff", "832b1efffffffff", "832709fffffffff",
+                      "832ab1fffffffff", "834883fffffffff", "832802fffffffff", "832b1afffffffff",
+                      "834881fffffffff", "83276efffffffff", "8344d5fffffffff", "83441efffffffff",
+                      "8344aefffffffff", "8344f6fffffffff", "83276afffffffff", "8344d1fffffffff",
+                      "83291afffffffff", "8344acfffffffff", "8344f4fffffffff", "832a15fffffffff",
+                      "832768fffffffff", "832b10fffffffff", "83441afffffffff", "832a13fffffffff",
+                      "832a36fffffffff", "8344a8fffffffff", "8344f0fffffffff", "8312dafffffffff",
+                      "832a34fffffffff", "8312d8fffffffff", "832ab6fffffffff", "832ab2fffffffff",
+                      "832ab0fffffffff", "832749fffffffff", "83274dfffffffff", "832a90fffffffff",
+                      "832a91fffffffff", "832a92fffffffff", "832a93fffffffff", "832a94fffffffff",
+                      "832a96fffffffff", "832a98fffffffff", "832a9afffffffff", "832a9cfffffffff",
+                      "832a9efffffffff", "832661fffffffff", "832665fffffffff", "832668fffffffff",
+                      "832669fffffffff", "83266cfffffffff", "83266dfffffffff", "83266efffffffff")
+  n_unavail <- sum(!d$h3_3 %in% available_h3_3)
+  if (n_unavail > 0) {
+    cli::cli_alert_warning("This package is under development. Available data is currently limited, but will be available nationwide soon.\n")
+    cli::cli_alert_info(glue::glue("PM estimates for {n_unavail} rows will be NA due to unavailable data.\n"))
+    d_missing <- dplyr::filter(d, !h3_3 %in% available_h3_3)
+    d <- dplyr::filter(d, h3_3 %in% available_h3_3)
   }
 
   message('downloading PM chunk files...')
@@ -96,5 +112,6 @@ add_pm <- function(d, verbose = FALSE, ...) {
   })
 
   d_pm <- dplyr::bind_rows(d_split_pm)
+  if (n_unavail > 0) d_pm <- dplyr::bind_rows(d_missing, d_pm)
   return(d_pm)
 }
