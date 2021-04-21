@@ -1,6 +1,7 @@
 #' @import data.table
 
 prep_data <- function(d) {
+  d$row_index <- 1:nrow(d)
   dht::check_for_column(d, 'lon', d$lon)
   dht::check_for_column(d, 'lat', d$lat)
   dht::check_for_column(d, 'start_date', d$start_date)
@@ -9,10 +10,7 @@ prep_data <- function(d) {
   d$start_date <- dht::check_dates(d$start_date)
   d$end_date <- dht::check_dates(d$end_date)
   dht::check_end_after_start_date(d$start_date, d$end_date)
-
-  if (any(c(d$start_date < as.Date("2000-01-01"), d$end_date > as.Date("2020-12-31")))) {
-    cli::cli_alert_warning("one or more dates are out of range. data is available 2000-2020.")
-  }
+  return(d)
 }
 
 read_chunk_join <- function(d_split, fl_path, verbose=FALSE) {
@@ -58,10 +56,17 @@ get_unique_h3_3_year <- function(pm_chunks) {
 #' }
 #' @export
 add_pm <- function(d, verbose = FALSE, ...) {
-  prep_data(d)
+  d <- prep_data(d)
 
   d <- dht::expand_dates(d, by = 'day')
   d$year <- lubridate::year(d$date)
+  out_of_range_year <- sum(d$year < 2000 | d$year > 2020)
+  if (out_of_range_year > 0) {
+    cli::cli_alert_warning("Data is currently available from 2000 through 2020.")
+    cli::cli_alert_info(glue::glue("PM estimates for {out_of_range_year} rows will be NA due to unavailable data.\n"))
+    d_missing_date <- dplyr::filter(d, !year %in% 2000:2020)
+    d <- dplyr::filter(d, year %in% 2000:2020)
+  }
 
   message('matching lat/lon to h3 cells...')
   d$h3 <- suppressMessages(h3jsr::point_to_h3(dplyr::select(d, lon, lat), res = 8))
@@ -112,6 +117,10 @@ add_pm <- function(d, verbose = FALSE, ...) {
   })
 
   d_pm <- dplyr::bind_rows(d_split_pm)
+  if (out_of_range_year > 0) d_pm <- dplyr::bind_rows(d_missing_date, d_pm)
   if (n_unavail > 0) d_pm <- dplyr::bind_rows(d_missing, d_pm)
+  d_pm <- d_pm %>%
+    dplyr::arrange(row_index, date) %>%
+    dplyr::select(-row_index)
   return(d_pm)
 }
