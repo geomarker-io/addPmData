@@ -68,6 +68,13 @@ add_pm <- function(d, verbose = FALSE, ...) {
     d <- dplyr::filter(d, year %in% 2000:2020)
   }
 
+  n_missing_coords <- nrow(d %>% dplyr::filter(is.na(lat) | is.na(lon)))
+  if (n_missing_coords > 0) {
+    cli::cli_alert_warning(glue::glue("PM estimates for {n_missing_coords} rows will be NA due to missing coordinates in input data.\n"))
+    d_missing_coords <- dplyr::filter(d, is.na(lat) | is.na(lon))
+    d <- dplyr::filter(d, !is.na(lat), !is.na(lon))
+  }
+
   message('matching lat/lon to h3 cells...')
   d$h3 <- suppressMessages(h3jsr::point_to_h3(dplyr::select(d, lon, lat), res = 8))
   d$h3_3 <- h3jsr::get_parent(d$h3, res = 3)
@@ -90,7 +97,7 @@ add_pm <- function(d, verbose = FALSE, ...) {
   if (n_unavail > 0) {
     cli::cli_alert_warning("This package is under development. Available data is currently limited, but will be available nationwide soon.\n")
     cli::cli_alert_info(glue::glue("PM estimates for {n_unavail} rows will be NA due to unavailable data.\n"))
-    d_missing <- dplyr::filter(d, !h3_3 %in% available_h3_3)
+    d_missing_h3 <- dplyr::filter(d, !h3_3 %in% available_h3_3)
     d <- dplyr::filter(d, h3_3 %in% available_h3_3)
   }
 
@@ -118,7 +125,8 @@ add_pm <- function(d, verbose = FALSE, ...) {
 
   d_pm <- dplyr::bind_rows(d_split_pm)
   if (out_of_range_year > 0) d_pm <- dplyr::bind_rows(d_missing_date, d_pm)
-  if (n_unavail > 0) d_pm <- dplyr::bind_rows(d_missing, d_pm)
+  if (n_unavail > 0) d_pm <- dplyr::bind_rows(d_missing_h3, d_pm)
+  if (n_missing_coords > 0) d_pm <- dplyr::bind_rows(d_missing_coords, d_pm)
   d_pm <- d_pm %>%
     dplyr::arrange(row_index, date) %>%
     dplyr::select(-row_index)
