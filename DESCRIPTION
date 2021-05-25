@@ -25,7 +25,7 @@ RoxygenNote: 7.1.1
 Imports: 
     cli (>= 2.3.1),
     data.table (>= 1.14.0),
-    dht (>= 0.0.0.9000),
+    dht (>= 0.0.3),
     dplyr (>= 1.0.5),
     fst (>= 0.9.4),
     glue (>= 1.4.2),
