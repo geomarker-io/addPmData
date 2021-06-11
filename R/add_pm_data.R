@@ -1,9 +1,17 @@
 #' @import data.table
 
-prep_data <- function(d) {
+prep_data <- function(d, type = 'coords') {
   d$row_index <- 1:nrow(d)
-  dht::check_for_column(d, 'lon', d$lon)
-  dht::check_for_column(d, 'lat', d$lat)
+
+  if(type == 'coords') {
+    dht::check_for_column(d, 'lon', d$lon)
+    dht::check_for_column(d, 'lat', d$lat)
+  }
+
+  if(type == 'h3') {
+    dht::check_for_column(d, 'h3', d$h3)
+  }
+
   dht::check_for_column(d, 'start_date', d$start_date)
   dht::check_for_column(d, 'end_date', d$end_date)
 
@@ -35,6 +43,8 @@ get_unique_h3_3_year <- function(pm_chunks) {
 #' add PM2.5 concentrations to geocoded data based on h3 geohash
 #'
 #' @param d dataframe with columns called 'lat', 'lon', 'start_date' and 'end_date'
+#' @param type either 'coords' (if d contains lat/lon) or 'h3' (if d contains
+#'             . resolution 8 h3 ids)
 #' @param verbose if TRUE a statement is printed to the console telling the user
 #'                which chunk file is currently being processed. Defaults to FALSE.
 #' @param ... arguments passed to \code{\link[s3]{s3_get_files}}
@@ -55,8 +65,8 @@ get_unique_h3_3_year <- function(pm_chunks) {
 #'    add_pm(d)
 #' }
 #' @export
-add_pm <- function(d, verbose = FALSE, ...) {
-  d <- prep_data(d)
+add_pm <- function(d, type = 'coords', verbose = FALSE, ...) {
+  d <- prep_data(d, type)
 
   d <- dht::expand_dates(d, by = 'day')
   d$year <- lubridate::year(d$date)
@@ -68,17 +78,19 @@ add_pm <- function(d, verbose = FALSE, ...) {
     d <- dplyr::filter(d, year %in% 2000:2020)
   }
 
-  n_missing_coords <- nrow(d %>% dplyr::filter(is.na(lat) | is.na(lon)))
-  if (n_missing_coords > 0) {
-    cli::cli_alert_warning(glue::glue("PM estimates for {n_missing_coords} rows will be NA due to missing coordinates in input data.\n"))
-    d_missing_coords <- dplyr::filter(d, is.na(lat) | is.na(lon))
-    d <- dplyr::filter(d, !is.na(lat), !is.na(lon))
-  }
+  if(type == 'coords'){
+    n_missing_coords <- nrow(d %>% dplyr::filter(is.na(lat) | is.na(lon)))
+    if (n_missing_coords > 0) {
+      cli::cli_alert_warning(glue::glue("PM estimates for {n_missing_coords} rows will be NA due to missing coordinates in input data.\n"))
+      d_missing_coords <- dplyr::filter(d, is.na(lat) | is.na(lon))
+      d <- dplyr::filter(d, !is.na(lat), !is.na(lon))
+    }
 
-  message('matching lat/lon to h3 cells...')
-  d$h3 <- suppressMessages(h3jsr::point_to_h3(dplyr::select(d, lon, lat), res = 8))
+    message('matching lat/lon to h3 cells...')
+    d$h3 <- suppressMessages(h3jsr::point_to_h3(dplyr::select(d, lon, lat), res = 8))
+  } else n_missing_coords <- 0
+
   d$h3_3 <- h3jsr::get_parent(d$h3, res = 3)
-
   available_h3_3 <- c("834453fffffffff", "834451fffffffff", "832ab5fffffffff", "83270bfffffffff",
                       "832ab3fffffffff", "832806fffffffff", "832b1efffffffff", "832709fffffffff",
                       "832ab1fffffffff", "834883fffffffff", "832802fffffffff", "832b1afffffffff",
@@ -132,3 +144,4 @@ add_pm <- function(d, verbose = FALSE, ...) {
     dplyr::select(-row_index)
   return(d_pm)
 }
+

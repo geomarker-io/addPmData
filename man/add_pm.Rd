@@ -4,10 +4,13 @@
 \alias{add_pm}
 \title{add PM2.5 concentrations to geocoded data based on h3 geohash}
 \usage{
-add_pm(d, verbose = FALSE, ...)
+add_pm(d, type = "coords", verbose = FALSE, ...)
 }
 \arguments{
 \item{d}{dataframe with columns called 'lat', 'lon', 'start_date' and 'end_date'}
+
+\item{type}{either 'coords' (if d contains lat/lon) or 'h3' (if d contains
+. resolution 8 h3 ids)}
 
 \item{verbose}{if TRUE a statement is printed to the console telling the user
 which chunk file is currently being processed. Defaults to FALSE.}
