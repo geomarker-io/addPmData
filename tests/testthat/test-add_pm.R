@@ -55,7 +55,7 @@ test_that("add_pm works", {
   )
 })
 
-test_that("add_pm returns NA for non-Cincinnati locations for now (with warning)", {
+test_that("add_pm returns NA locations in areas with unavailable predictions for now (with warning)", {
   expect_equal(
   tibble::tribble(
   ~id,         ~lat,    ~lon, ~start_date,    ~end_date,
