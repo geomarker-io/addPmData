@@ -16,14 +16,6 @@ input_data_h3 <- function() {
     dplyr::mutate(dplyr::across(c(start_date, end_date), as.Date))
 }
 
-test_that("add_pm errors without credentials", {
-  expect_error(
-    withr::with_envvar(new = c(
-      "AWS_ACCESS_KEY_ID" = NA,
-      "AWS_SECRET_ACCESS_KEY" = NA
-    ), {
-      add_pm(input_data()) }))})
-
 test_that("add_pm works", {
   expect_equal(
     add_pm(input_data()),
