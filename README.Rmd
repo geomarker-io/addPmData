@@ -21,9 +21,7 @@ knitr::opts_chunk$set(
 
 The goal of addPmData is to add PM estimates to geocoded data based on h3 geohash.
 
-More information on the building of the PM model and creation of PM chunk files can be found [here](https://github.com/geomarker-io/st_pm_hex).
-
-Our PM estimates are currently private, and access requires authenication through Amazon s3. Please contact us for credentials, and see our documentation for [how to set up AWS credentials in R](https://github.com/geomarker-io/s3#setting-up-aws-credentials).
+The repository of code used to build the exposure model can be found at https://github.com/geomarker-io/st_pm_hex and an accompanying preprint manuscript is available at (preprint DOI: https://doi.org/10.20944/preprints202109.0164.v1).
 
 ## Installation
 
