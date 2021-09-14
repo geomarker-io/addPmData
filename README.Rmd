@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 The goal of addPmData is to add PM estimates to geocoded data.
 
-The PM2.5 exposure assessment model is currently unpublished, but the private repository of code used to build the model can be found [here](https://github.com/geomarker-io/st_pm_hex).
+The repository of code used to build the exposure model can be found at https://github.com/geomarker-io/st_pm_hex and an accompanying preprint manuscript is available at (preprint DOI: https://doi.org/10.20944/preprints202109.0164.v1).
 
 ## Installation
 

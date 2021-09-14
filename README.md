@@ -10,9 +10,10 @@
 
 The goal of addPmData is to add PM estimates to geocoded data.
 
-The PM2.5 exposure assessment model is currently unpublished, but the
-private repository of code used to build the model can be found
-[here](https://github.com/geomarker-io/st_pm_hex).
+The repository of code used to build the exposure model can be found at
+<https://github.com/geomarker-io/st_pm_hex> and an accompanying preprint
+manuscript is available at (preprint DOI:
+<https://doi.org/10.20944/preprints202109.0164.v1>).
 
 ## Installation
 
@@ -41,12 +42,7 @@ d <- tibble::tribble(
 add_pm(d)
 #> matching lat/lon to h3 cells...
 #> downloading PM chunk files...
-#> ℹ 3 files totaling 60.24 MB will be downloaded to '/Users/RASV5G/OneDrive - cchmc/addPmData/s3_downloads'
-#> → Downloading 3 files.
-#> → Got 0 files, downloading 3
-#> → Got 1 file, downloading 2
-#> → Got 2 files, downloading 1
-#> ✓ Downloaded 3 files in 23.3s.
+#> ℹ all files already exist
 #> Reading in and joining PM data...
 #> # A tibble: 10 × 11
 #>    id       lat   lon start_date end_date   date        year h3    h3_3  pm_pred
