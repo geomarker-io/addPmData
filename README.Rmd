@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 The goal of addPmData is to add PM estimates to geocoded data.
 
-The repository of code used to build the exposure model can be found at https://github.com/geomarker-io/st_pm_hex and an accompanying preprint manuscript is available at (preprint DOI: https://doi.org/10.20944/preprints202109.0164.v1).
+More information on the development of the spatial model can be found at the st_pm_hex repository and in the scientific manuscript describing model development: Brokamp, C. A High Resolution Spatiotemporal Fine Particulate Matter Exposure Assessment Model for the Contiguous United States. Environmental Advances. In Press. 2021. (accepted preprint available online: https://doi.org/10.1016/j.envadv.2021.100155).
 
 ## Installation
 
