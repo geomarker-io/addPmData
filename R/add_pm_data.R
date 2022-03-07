@@ -109,22 +109,6 @@ add_pm <- function(d, type = 'coords', verbose = FALSE, ...) {
     d <- dplyr::filter(d, d$h3_3 %in% safe_harbor_h3)
   }
 
-  ## h3 ids belonging to large aggregate chunks that are currently unavailable
-  d <- d %>%
-    dplyr::mutate(n_aggregated = stringr::str_count(d$h3_3, "-"))
-
-  unavailble_h3 <- d %>%
-    dplyr::filter(n_aggregated > 2) %>%
-    nrow(.)
-
-  if (unavailble_h3 > 0) {
-    cli::cli_alert_warning("This package is under development. Available data is currently limited, but will be available nationwide soon.\n")
-    cli::cli_alert_info(glue::glue("PM estimates for {unavailble_h3} rows will be NA due to unavailable data.\n"))
-    d_unavailable_h3 <- dplyr::filter(d, n_aggregated > 2) %>%  dplyr::select(-n_aggregated)
-    d <- dplyr::filter(d, n_aggregated < 3)
-  }
-  d <- dplyr::select(d, -n_aggregated)
-
   message('downloading PM chunk files...')
   pm_chunks <-
     glue::glue("s3://pm25-brokamp/{d$h3_3}_{d$year}_h3pm.fst") %>%
@@ -150,7 +134,6 @@ add_pm <- function(d, type = 'coords', verbose = FALSE, ...) {
   d_pm <- dplyr::bind_rows(d_split_pm)
   if (out_of_range_year > 0) d_pm <- dplyr::bind_rows(d_missing_date, d_pm)
   if (invalid_h3 > 0) d_pm <- dplyr::bind_rows(d_invald_h3, d_pm)
-  if (unavailble_h3 > 0) d_pm <- dplyr::bind_rows(d_unavailable_h3, d_pm)
   if (n_missing_coords > 0) d_pm <- dplyr::bind_rows(d_missing_coords, d_pm)
   d_pm <- d_pm %>%
     dplyr::arrange(row_index, date) %>%
