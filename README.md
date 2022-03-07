@@ -10,7 +10,12 @@
 
 The goal of addPmData is to add PM estimates to geocoded data.
 
-More information on the development of the spatial model can be found at the [st_pm_hex](https://github.com/geomarker-io/st_pm_hex) repository and in the scientific manuscript describing model development: `Brokamp, C. A High Resolution Spatiotemporal Fine Particulate Matter Exposure Assessment Model for the Contiguous United States. Environmental Advances. In Press. 2021.` (accepted preprint available online: [https://doi.org/10.1016/j.envadv.2021.100155](https://doi.org/10.1016/j.envadv.2021.100155)).
+More information on the development of the spatial model can be found at
+the st_pm_hex repository and in the scientific manuscript describing
+model development: Brokamp, C. A High Resolution Spatiotemporal Fine
+Particulate Matter Exposure Assessment Model for the Contiguous United
+States. Environmental Advances. In Press. 2021. (accepted preprint
+available online: <https://doi.org/10.1016/j.envadv.2021.100155>).
 
 ## Installation
 
@@ -26,15 +31,12 @@ remotes::install_github("geomarker-io/addPmData")
 
 ``` r
 library(addPmData)
-#> Checking for PM data availability...
-#> ✓ Done. 94% of resolution 3 hexagons have PM data available.
 
 d <- tibble::tribble(
   ~id,         ~lat,    ~lon, ~start_date,    ~end_date,
   '55000100280', 39.2, -84.6, '2008-09-09', '2008-09-11',
   '55000100281', 39.2, -84.6, '2007-08-05', '2007-08-08',
-  '55000100282', 39.2, -84.6, '2015-08-31', '2015-09-02') %>%
-  dplyr::mutate(dplyr::across(c(start_date, end_date), as.Date))
+  '55000100282', 39.2, -84.6, '2015-08-31', '2015-09-02')
 
 add_pm(d)
 #> matching lat/lon to h3 cells...

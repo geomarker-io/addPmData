@@ -3,8 +3,7 @@ input_data <- function() {
   ~id,         ~lat,    ~lon, ~start_date,    ~end_date,
   '55000100280', 39.2, -84.6, '2008-09-09', '2008-09-11',
   '55000100281', 39.2, -84.6, '2007-08-05', '2007-08-08',
-  '55000100282', 39.2, -84.6, '2015-08-31', '2015-09-02') %>%
-  dplyr::mutate(dplyr::across(c(start_date, end_date), as.Date))
+  '55000100282', 39.2, -84.6, '2015-08-31', '2015-09-02') 
 }
 
 input_data_h3 <- function() {
@@ -12,8 +11,7 @@ input_data_h3 <- function() {
     ~id,         ~h3, ~start_date,    ~end_date,
     '55000100280', '882a930a23fffff', '2008-09-09', '2008-09-11',
     '55000100281', '882a930a23fffff', '2007-08-05', '2007-08-08',
-    '55000100282', '882a930a23fffff', '2015-08-31', '2015-09-02') %>%
-    dplyr::mutate(dplyr::across(c(start_date, end_date), as.Date))
+    '55000100282', '882a930a23fffff', '2015-08-31', '2015-09-02')
 }
 
 test_that("add_pm works", {
@@ -86,7 +84,6 @@ test_that("add_pm returns NA for dates outside of range (with warning)", {
       '55000100280', 39.2, -84.6, '2021-09-09', '2021-09-11',
       '55000100281', 39.2, -84.6, '2007-08-05', '2007-08-08',
       '55000100282', 39.2, -84.6, '2015-08-31', '2015-09-02') %>%
-      dplyr::mutate(dplyr::across(c(start_date, end_date), as.Date)) %>%
       add_pm(),
     tibble::tibble(
       id = c("55000100280", "55000100280", "55000100280",
