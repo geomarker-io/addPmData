@@ -33,6 +33,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID: ${{ secrets.BROKAMP_PM25_READ_ONLY_AWS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.BROKAMP_PM25_READ_ONLY_AWS_KEY_SECRET }}
+      DOWNLOAD_STATIC_LIBV8: 1
 
     steps:
       - uses: actions/checkout@v2
